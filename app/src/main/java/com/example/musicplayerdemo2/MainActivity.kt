@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.musicplayerdemo2.model.Media3Components
 import com.example.musicplayerdemo2.ui.theme.MusicPlayerDemo2Theme
+import com.example.musicplayerdemo2.uiLayer.PlayerScreen
 import com.example.musicplayerdemo2.viewModel.MusicViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -48,6 +49,8 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
                     AudioShow(musicViewModel,media3Components)
+
+                  //  PlayerScreen()
 
                 }
             }

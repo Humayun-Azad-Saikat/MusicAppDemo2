@@ -1,6 +1,5 @@
 package com.example.musicplayerdemo2.uiLayer
 
-import android.graphics.drawable.Drawable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,18 +9,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.twotone.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.musicplayerdemo2.R
 
 
@@ -38,6 +38,7 @@ fun PlayerScreen(){
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Text("Song Name", fontSize = 24.sp)
             Image(
                 modifier = Modifier.size(500.dp),
                 painter = painterResource(R.drawable.audioalbum),
@@ -55,19 +56,19 @@ fun PlayerScreen(){
                 horizontalArrangement = Arrangement.Center
             ){
                 Icon(
+                    painter = painterResource(R.drawable.previousicon),
+                    contentDescription = "play",
+                    Modifier.size(80.dp),
+                )
+
+                Icon(
                     imageVector = Icons.Filled.PlayArrow,
                     contentDescription = "play",
                     Modifier.size(80.dp)
                 )
 
                 Icon(
-                    imageVector = Icons.Filled.,
-                    contentDescription = "play",
-                    Modifier.size(80.dp)
-                )
-
-                Icon(
-                    imageVector = Icons.TwoTone.N,
+                    painter = painterResource(R.drawable.nexticon),
                     contentDescription = "play",
                     Modifier.size(80.dp)
                 )

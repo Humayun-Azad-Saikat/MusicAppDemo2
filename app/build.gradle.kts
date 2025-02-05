@@ -5,6 +5,7 @@ plugins {
 
     id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
+    kotlin("plugin.serialization") version "2.1.10"
 
 }
 
@@ -71,6 +72,12 @@ dependencies {
 
     //media3
     implementation(libs.androidx.media3.exoplayer)
+
+    //navigation
+    implementation(libs.androidx.navigation.compose)
+
+    //kotlinx serialization for navigaiton
+    implementation(libs.kotlinx.serialization.json)
 
 }
 

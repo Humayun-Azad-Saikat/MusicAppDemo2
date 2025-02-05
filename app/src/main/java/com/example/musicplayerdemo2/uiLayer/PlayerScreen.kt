@@ -1,6 +1,7 @@
 package com.example.musicplayerdemo2.uiLayer
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -58,19 +59,19 @@ fun PlayerScreen(){
                 Icon(
                     painter = painterResource(R.drawable.previousicon),
                     contentDescription = "play",
-                    Modifier.size(80.dp),
+                    Modifier.size(80.dp).clickable(onClick = {})
                 )
 
                 Icon(
                     imageVector = Icons.Filled.PlayArrow,
                     contentDescription = "play",
-                    Modifier.size(80.dp)
+                    Modifier.size(80.dp).clickable(onClick = {})
                 )
 
                 Icon(
                     painter = painterResource(R.drawable.nexticon),
                     contentDescription = "play",
-                    Modifier.size(80.dp)
+                    Modifier.size(80.dp).clickable(onClick = {})
                 )
 
             }

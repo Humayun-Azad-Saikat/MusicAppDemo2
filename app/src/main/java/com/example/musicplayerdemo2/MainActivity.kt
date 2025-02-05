@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,8 +26,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.musicplayerdemo2.model.Media3Components
+import com.example.musicplayerdemo2.navigation.NavigationHost
+import com.example.musicplayerdemo2.navigation.ScreenDestination
 import com.example.musicplayerdemo2.ui.theme.MusicPlayerDemo2Theme
+import com.example.musicplayerdemo2.uiLayer.AudioListScreen
 import com.example.musicplayerdemo2.uiLayer.PlayerScreen
 import com.example.musicplayerdemo2.viewModel.MusicViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,51 +42,18 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val musicViewModel: MusicViewModel by viewModels()
-
-    @Inject
-    lateinit var media3Components: Media3Components
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             MusicPlayerDemo2Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding -> //if removed no problem
 
-                    AudioShow(musicViewModel,media3Components)
-
-                  //  PlayerScreen()
+                    val navController = rememberNavController()
+                    NavigationHost(navController)
 
                 }
             }
         }
     }
-}
-
-@Composable
-fun AudioShow(viewModel: MusicViewModel = hiltViewModel(),media3Components: Media3Components){
-
-    val audioFiles = viewModel.audioFiles.observeAsState(initial = emptyList())
-    viewModel.getMusic()
-
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        //verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        items(audioFiles.value){
-            Card(
-                modifier = Modifier.fillMaxSize().height(80.dp).padding(0.dp,6.dp,0.dp,0.dp)
-                    .clickable(onClick = {
-                        media3Components.loadMedia(it.uri.toString())
-                        media3Components.play()
-                    }),
-                colors = CardDefaults.cardColors(containerColor = Color.Cyan),
-            ) {
-                Text("${it.name}", color = Color.Blue, textAlign = TextAlign.Center)
-            }
-        }
-    }
-
 }

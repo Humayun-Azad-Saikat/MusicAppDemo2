@@ -11,14 +11,16 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MusicViewModel @Inject constructor(private val musicRepository: MusicRepository): ViewModel() {
+class AudioListScreenViewModel @Inject constructor(private val musicRepository: MusicRepository): ViewModel() { //viewmodel for audioListScreen
 
     private val _audioFiles = MutableLiveData< List<Audio>>()
     val audioFiles: LiveData<List<Audio>> = _audioFiles
 
     @Inject
-    lateinit var media3Components: Media3Components
+    lateinit var media3Components: Media3Components //for playerScreen
 
+
+    //audio content resolver handle //for audioListScreen
     fun getMusic(){
         viewModelScope.launch{
 
@@ -30,13 +32,32 @@ class MusicViewModel @Inject constructor(private val musicRepository: MusicRepos
         }
     }
 
+//    fun deleteAudio(uri: Uri){
+//        viewModelScope.launch{
+//            musicContentResolver.delete(uri)
+//        }
+//    }
+
+
+
+//    fun loadMediaUri(mediaUri: String){
+//        media3Components.loadMedia(mediaUri)
+//    }
+
+    fun loadPlaylist(mediaUri: List<String>,currentAudio: String){
+        media3Components.loadMediaPlaylist(mediaUri,currentAudio)
+    }
 
     fun loadMediaUri(mediaUri: String){
-        media3Components.loadMedia(mediaUri)
+        media3Components.loadMediaUri(mediaUri)
     }
 
     fun playAudio(){
         media3Components.play()
+    }
+
+    fun getCurrentAudio(mediaUri: String):String{
+        return media3Components.getCurrentAudio(mediaUri)
     }
 
 }

@@ -1,7 +1,9 @@
 package com.example.musicplayerdemo2.uiLayer
 
+import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -23,14 +25,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.example.musicplayerdemo2.model.Media3Components
 import com.example.musicplayerdemo2.navigation.ScreenDestination
-import com.example.musicplayerdemo2.viewModel.MusicViewModel
+import com.example.musicplayerdemo2.viewModel.AudioListScreenViewModel
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 //fun AudioListScreen(viewModel: MusicViewModel = hiltViewModel(),media3Components: Media3Components,navHostController: NavHostController){
-fun AudioListScreen(viewModel: MusicViewModel = hiltViewModel(),navHostController: NavHostController){
+fun AudioListScreen(viewModel: AudioListScreenViewModel = hiltViewModel(), navHostController: NavHostController){
 
     //val navHostController = rememberNavController()
 
@@ -42,18 +43,40 @@ fun AudioListScreen(viewModel: MusicViewModel = hiltViewModel(),navHostControlle
 
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize().background(Color(0xFF335bff)),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF335bff)),
         //verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(audioFiles.value){
             Card(
-                modifier = Modifier.fillMaxSize().height(90.dp).padding(0.dp,6.dp,0.dp,0.dp)
-                    .clickable(onClick = {
-                        viewModel.loadMediaUri(it.uri.toString())
-                        viewModel.playAudio()
-                        navHostController.navigate(ScreenDestination.PlayerScreen)
-                    }),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .height(90.dp)
+                    .padding(0.dp, 6.dp, 0.dp, 0.dp)
+
+                    .combinedClickable(
+
+                        onClick = {
+                            //  val mediaUris = audioFiles.value.map { it.uri.toString() }
+                            //  Log.d("Media3Components", "AudioListScreen: ${it.id}")
+                            //viewModel.loadMediaUri(it.uri.toString())
+                            // viewModel.loadMediaUri(listOf(it.uri.toString()))
+                            //  viewModel.loadMediaUri(it.uri.toString())
+
+                            viewModel.loadPlaylist(audioFiles.value.map { it.uri.toString() },it.uri.toString())
+                            viewModel.getCurrentAudio(it.uri.toString())
+                            viewModel.playAudio()
+                            navHostController.navigate(ScreenDestination.PlayerScreen)
+                        },
+
+//                        onLongClick = {
+//                            viewModel.deleteAudio(it.uri)
+//                        }
+
+                    ),
+
                 colors = CardDefaults.cardColors(containerColor = Color.Cyan),
             ) {
                 Text("${it.name}", color = Color.Blue, textAlign = TextAlign.Center, fontSize = 20.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)

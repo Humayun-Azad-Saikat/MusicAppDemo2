@@ -2,6 +2,7 @@ package com.example.musicplayerdemo2.uiLayer
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,10 +13,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
+
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +35,14 @@ import com.example.musicplayerdemo2.R
 import com.example.musicplayerdemo2.viewModel.AudioControlScreenViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.focus.focusModifier
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.tooling.preview.Preview
+import kotlinx.coroutines.delay
 
 
 //@Preview(showBackground = true)
@@ -37,7 +50,16 @@ import androidx.compose.runtime.setValue
 fun PlayerScreen(viewModel: AudioControlScreenViewModel = hiltViewModel()){
 
 
-  //  val isPlaying by remember { derivedStateOf { viewModel.media3Components.isPlaying() } }
+    var seekPosition: Float by remember { mutableStateOf(0f) }
+    var duration: Long by remember { mutableStateOf(1L) }
+
+    LaunchedEffect(key1 =  true) {
+        while (true){
+            seekPosition = viewModel.getCurrentSeekPosition().toFloat()
+            duration = viewModel.getDuration()
+            delay(300)
+        }
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -48,18 +70,37 @@ fun PlayerScreen(viewModel: AudioControlScreenViewModel = hiltViewModel()){
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Song Name", fontSize = 24.sp)
+            Text("${viewModel.getAudioName()}", fontSize = 24.sp,fontFamily = FontFamily.Serif, modifier = Modifier.basicMarquee(), color = Color.Blue)
+
             Image(
                 modifier = Modifier.size(500.dp),
-                painter = painterResource(R.drawable.audioalbum),
-                contentDescription = "audioAlbum"
+                bitmap = if(viewModel.getAlbum()?.asImageBitmap() != null){
+                    viewModel.getAlbum()!!.asImageBitmap()
+                } else{
+                    ImageBitmap.imageResource(R.drawable.audioalbum)
+                },
+                contentDescription = ""
             )
+
+            Row() {
+                Text("${viewModel.formatTime(seekPosition.toLong())}", modifier = Modifier.weight(1f), fontSize = 20.sp, fontFamily = FontFamily.Serif, color = Color.Blue)
+                Text("${viewModel.formatTime(duration)}", modifier = Modifier, fontSize = 20.sp,fontFamily = FontFamily.Serif, color = Color.Blue)
+            }
 
             Slider(
                 modifier = Modifier.fillMaxWidth(),
-                value = 0.5f,
-                onValueChange = {}
+                value = seekPosition,
+                valueRange = 0f..duration.toFloat(),
+                onValueChange = {seekPosition = it},
+                onValueChangeFinished = {viewModel.seekTo(seekPosition.toLong())},
+                colors = SliderDefaults.colors(
+                    thumbColor = Color.Blue,
+                    activeTrackColor = Color.Blue,
+                    inactiveTrackColor = Color.LightGray,
+                )
             )
+
+
 
             Row (
                 Modifier.fillMaxWidth(),
@@ -72,11 +113,13 @@ fun PlayerScreen(viewModel: AudioControlScreenViewModel = hiltViewModel()){
                         .size(80.dp)
                         .clickable(onClick = {
                             viewModel.previousTrack()
-                        })
+                        }),
+
+                    tint = Color.Blue
                 )
 
                 Icon(
-                    painter = if (viewModel.media3Components.isPlaying()) painterResource(R.drawable.playicon) else painterResource(R.drawable.pauseicon),
+                    painter = if (viewModel.media3Components.isPlaying()) painterResource(R.drawable.pauseicon) else painterResource(R.drawable.playicon),
                    // imageVector = Icons.Filled.,
                     contentDescription = "playPause",
                     Modifier
@@ -90,7 +133,9 @@ fun PlayerScreen(viewModel: AudioControlScreenViewModel = hiltViewModel()){
                             } else {
                                 viewModel.pauseAudio()
                             }
-                        })
+                        }),
+
+                    tint = Color.Blue
                 )
 
                 Icon(
@@ -100,7 +145,9 @@ fun PlayerScreen(viewModel: AudioControlScreenViewModel = hiltViewModel()){
                         .size(80.dp)
                         .clickable(onClick = {
                             viewModel.nextTrack()
-                        })
+                        }),
+
+                    tint = Color.Blue
                 )
 
             }

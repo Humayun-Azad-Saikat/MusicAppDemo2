@@ -1,10 +1,14 @@
 package com.example.musicplayerdemo2.model
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.media.browse.MediaBrowser
 import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.exoplayer.ExoPlayer
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -28,6 +32,8 @@ class Media3Components @Inject constructor(context: Context): DefaultLifecycleOb
         playList.clear()
         exoPlayer.setMediaItems(playList)
         mediaUris.forEach { mediaUri ->
+
+
             playList.add(MediaItem.fromUri(mediaUri))
             Log.d("Media3Components", "Added media: $mediaUri")
 
@@ -44,6 +50,7 @@ class Media3Components @Inject constructor(context: Context): DefaultLifecycleOb
         }
 
 
+
     }
 
 
@@ -56,7 +63,6 @@ class Media3Components @Inject constructor(context: Context): DefaultLifecycleOb
     override fun getCurrentAudio(mediaUri: String): String{
         return mediaUri.toString()
     }
-
 
 
     override fun play(){
@@ -77,11 +83,7 @@ class Media3Components @Inject constructor(context: Context): DefaultLifecycleOb
 
     override fun nextTrack() {
         if (playList.isNotEmpty()) {
-           // currentIndex = (currentIndex + 1) % playList.size
-//            currentIndex = currentIndex+1
-//            if(currentIndex == playList.size){
-//                currentIndex = 0
-//            }
+
             currentIndex = (currentIndex + 1) % playList.size
 
             Log.d("media3Components", "$currentIndex")
@@ -100,6 +102,36 @@ class Media3Components @Inject constructor(context: Context): DefaultLifecycleOb
             exoPlayer.play()
             Log.d("media3Components", "$currentIndex")
         }
+    }
+
+    override fun getCurrentSeekPositionTime(): Long{
+        return exoPlayer.currentPosition
+    }
+
+    override fun getDuration(): Long{
+        val duration = exoPlayer.duration
+        return if (duration > 0) duration else 1L
+    }
+
+    override fun seekTo(position: Long){
+        exoPlayer.seekTo(position)
+    }
+
+    override fun getAudioName(): String{
+       // return (if(exoPlayer.mediaMetadata.title.toString() != null) else "Unknown Track").toString()
+        val audioName = exoPlayer.mediaMetadata.title.toString()
+        if(audioName.isNotEmpty() && exoPlayer.isPlaying){
+            return audioName
+        }
+        else if(!exoPlayer.isPlaying){
+            return ""
+        }
+        return "Unknown Track"
+    }
+
+    override fun getAlbum (): Bitmap? {
+        val artworkData = exoPlayer.mediaMetadata.artworkData
+        return artworkData?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
     }
 
     override fun onDestroy(owner: LifecycleOwner) {

@@ -19,6 +19,8 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -59,12 +61,6 @@ fun AudioListScreen(viewModel: AudioListScreenViewModel = hiltViewModel(), navHo
                     .combinedClickable(
 
                         onClick = {
-                            //  val mediaUris = audioFiles.value.map { it.uri.toString() }
-                            //  Log.d("Media3Components", "AudioListScreen: ${it.id}")
-                            //viewModel.loadMediaUri(it.uri.toString())
-                            // viewModel.loadMediaUri(listOf(it.uri.toString()))
-                            //  viewModel.loadMediaUri(it.uri.toString())
-
                             viewModel.loadPlaylist(audioFiles.value.map { it.uri.toString() },it.uri.toString())
                             viewModel.getCurrentAudio(it.uri.toString())
                             viewModel.playAudio()
@@ -79,9 +75,9 @@ fun AudioListScreen(viewModel: AudioListScreenViewModel = hiltViewModel(), navHo
 
                 colors = CardDefaults.cardColors(containerColor = Color.Cyan),
             ) {
-                Text("${it.name}", color = Color.Blue, textAlign = TextAlign.Center, fontSize = 20.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text("${it.name}", color = Color.Blue, textAlign = TextAlign.Center, fontSize = 20.sp, maxLines = 1, overflow = TextOverflow.Ellipsis, fontFamily = FontFamily.Serif)
                 Spacer(modifier = Modifier.padding(0.dp,5.dp,0.dp,0.dp))
-                Text("Artist:${it.artist}", color = Color(color = 0xFFff8a33), textAlign = TextAlign.Center)
+                Text("Artist:${it.artist}", color = Color(color = 0xFFff8a33), textAlign = TextAlign.Center,maxLines = 1, overflow = TextOverflow.Ellipsis, fontFamily = FontFamily.Serif)
             }
         }
     }

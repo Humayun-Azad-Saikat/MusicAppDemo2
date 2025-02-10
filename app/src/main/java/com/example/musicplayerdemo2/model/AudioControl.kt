@@ -1,5 +1,7 @@
 package com.example.musicplayerdemo2.model
 
+import android.graphics.Bitmap
+
 interface AudioControl {
 
    // fun loadMedia(mediaUris: String)
@@ -11,6 +13,11 @@ interface AudioControl {
     fun nextTrack()
     fun previousTrack()
     fun isPlaying(): Boolean
+    fun getCurrentSeekPositionTime(): Long
+    fun getDuration(): Long
+    fun seekTo(position: Long)
+    fun getAudioName(): String
+    fun getAlbum (): Bitmap?
     fun release()
 
 

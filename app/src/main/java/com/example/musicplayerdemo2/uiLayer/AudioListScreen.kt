@@ -75,11 +75,15 @@ fun AudioListScreen(viewModel: AudioListScreenViewModel = hiltViewModel(), navHo
 
                 colors = CardDefaults.cardColors(containerColor = Color.Cyan),
             ) {
-                Text("${it.name}", color = Color.Blue, textAlign = TextAlign.Center, fontSize = 20.sp, maxLines = 1, overflow = TextOverflow.Ellipsis, fontFamily = FontFamily.Serif)
+                Text("${nameString(it.name)}", color = Color.Blue, textAlign = TextAlign.Center, fontSize = 20.sp, maxLines = 1, overflow = TextOverflow.Ellipsis, fontFamily = FontFamily.Serif)
                 Spacer(modifier = Modifier.padding(0.dp,5.dp,0.dp,0.dp))
                 Text("Artist:${it.artist}", color = Color(color = 0xFFff8a33), textAlign = TextAlign.Center,maxLines = 1, overflow = TextOverflow.Ellipsis, fontFamily = FontFamily.Serif)
             }
         }
     }
 
+}
+
+fun nameString(name: String): String{
+    return name.replace("_"," ").replace("-"," ")
 }

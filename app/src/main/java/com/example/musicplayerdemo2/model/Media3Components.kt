@@ -4,17 +4,19 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.browse.MediaBrowser
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.exoplayer.ExoPlayer
+import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class Media3Components @Inject constructor(context: Context): DefaultLifecycleObserver, AudioControl{ //extented lifecycle owner for observing the app life cycle like onDistroy the media player will realese
+class Media3Components @Inject constructor(val context: Context): DefaultLifecycleObserver, AudioControl{ //extented lifecycle owner for observing the app life cycle like onDistroy the media player will realese
 
     private val exoPlayer = ExoPlayer.Builder(context).build()
 
@@ -117,17 +119,44 @@ class Media3Components @Inject constructor(context: Context): DefaultLifecycleOb
         exoPlayer.seekTo(position)
     }
 
-    override fun getAudioName(): String{
-       // return (if(exoPlayer.mediaMetadata.title.toString() != null) else "Unknown Track").toString()
-        val audioName = exoPlayer.mediaMetadata.title.toString()
-        if(audioName.isNotEmpty() && exoPlayer.isPlaying){
-            return audioName
+
+
+    override fun getAudioName(): String {
+        val mediaUri = playList.getOrNull(currentIndex)?.localConfiguration?.uri ?: return "Unknown Track"
+
+        val filePath = getFilePathFromContentUri(context = context , mediaUri)
+
+        if (filePath != null) {
+            val fileUri = Uri.fromFile(File(filePath)) // Convert to file://
+            Log.d("Converted URI", "File URI: $fileUri")
         }
-        else if(!exoPlayer.isPlaying){
-            return ""
+
+        val fileName = filePath?.substringAfterLast("/")?.replace("_", " ")?.replace("-", " ") ?: "Unknown Track"
+
+        return if (fileName.isNotEmpty() && exoPlayer.isPlaying) {
+            fileName
+        } else if (!exoPlayer.isPlaying) {
+            ""
+        } else {
+            "Unknown Track"
         }
-        return "Unknown Track"
     }
+
+
+
+    override fun getFilePathFromContentUri(context: Context, contentUri: Uri): String? {
+        val projection = arrayOf(android.provider.MediaStore.MediaColumns.DATA)
+        context.contentResolver.query(contentUri, projection, null, null, null)?.use { cursor ->
+            val columnIndex = cursor.getColumnIndexOrThrow(android.provider.MediaStore.MediaColumns.DATA)
+            if (cursor.moveToFirst()) {
+                return cursor.getString(columnIndex)
+            }
+        }
+        return null
+    }
+
+
+
 
     override fun getAlbum (): Bitmap? {
         val artworkData = exoPlayer.mediaMetadata.artworkData

@@ -1,6 +1,8 @@
 package com.example.musicplayerdemo2.model
 
+import android.content.Context
 import android.graphics.Bitmap
+import android.net.Uri
 
 interface AudioControl {
 
@@ -17,6 +19,7 @@ interface AudioControl {
     fun getDuration(): Long
     fun seekTo(position: Long)
     fun getAudioName(): String
+    fun getFilePathFromContentUri(context: Context, contentUri: Uri): String?
     fun getAlbum (): Bitmap?
     fun release()
 

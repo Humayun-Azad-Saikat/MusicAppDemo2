@@ -3,13 +3,11 @@ package com.example.musicplayerdemo2.model
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.media.browse.MediaBrowser
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaMetadata
 import androidx.media3.exoplayer.ExoPlayer
 import java.io.File
 import javax.inject.Inject
@@ -64,6 +62,10 @@ class Media3Components @Inject constructor(val context: Context): DefaultLifecyc
 
     override fun getCurrentAudio(mediaUri: String): String{
         return mediaUri.toString()
+    }
+
+    fun getCurrentPlayingAudioUri(): String?{
+       return (playList.getOrNull(currentIndex)?.localConfiguration?.uri ?: null)?.toString()
     }
 
 

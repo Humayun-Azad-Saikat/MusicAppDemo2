@@ -5,9 +5,15 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContent
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
@@ -19,7 +25,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -39,19 +44,30 @@ fun AudioListScreen(viewModel: AudioListScreenViewModel = hiltViewModel(), navHo
 
     val audioFiles = viewModel.audioFiles.observeAsState(initial = emptyList())
 
+
     LaunchedEffect(key1 = true) {
         viewModel.getMusic()
     }
-
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF335bff)),
-        //verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        contentPadding = WindowInsets.systemBars.asPaddingValues(),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         items(audioFiles.value){
+
+            val isPlaying = viewModel.media3Components.isPlaying()
+            val currentUri = it.uri.toString()
+            val currentPlayingAudioUri = viewModel.getCurrentPlayingAudioUri()
+
+
+            val playingNameTextColor: Color = if(isPlaying && currentUri == currentPlayingAudioUri) Color(0xFFff3333) else Color.Blue
+            val playingCardColor: Color = if(isPlaying && currentUri == currentPlayingAudioUri) Color(0xFFb5ff20) else Color.Cyan
+
+
+
             Card(
                 modifier = Modifier
                     .fillMaxSize()
@@ -61,10 +77,7 @@ fun AudioListScreen(viewModel: AudioListScreenViewModel = hiltViewModel(), navHo
                     .combinedClickable(
 
                         onClick = {
-                            viewModel.loadPlaylist(audioFiles.value.map { it.uri.toString() },it.uri.toString())
-                            viewModel.getCurrentAudio(it.uri.toString())
-                            viewModel.playAudio()
-                            navHostController.navigate(ScreenDestination.PlayerScreen)
+                            handleAudioClick(viewModel,currentUri,isPlaying, currentPlayingAudioUri,navHostController)
                         },
 
 //                        onLongClick = {
@@ -73,11 +86,12 @@ fun AudioListScreen(viewModel: AudioListScreenViewModel = hiltViewModel(), navHo
 
                     ),
 
-                colors = CardDefaults.cardColors(containerColor = Color.Cyan),
+                // artist color 0xFFff8a33
+                colors = CardDefaults.cardColors(containerColor = playingCardColor),
             ) {
-                Text("${nameString(it.name)}", color = Color.Blue, textAlign = TextAlign.Center, fontSize = 20.sp, maxLines = 1, overflow = TextOverflow.Ellipsis, fontFamily = FontFamily.Serif)
+                Text("${nameString(it.name)}", color = playingNameTextColor, textAlign = TextAlign.Center, fontSize = 20.sp, maxLines = 1, overflow = TextOverflow.Ellipsis, fontFamily = FontFamily.Serif)
                 Spacer(modifier = Modifier.padding(0.dp,5.dp,0.dp,0.dp))
-                Text("Artist:${it.artist}", color = Color(color = 0xFFff8a33), textAlign = TextAlign.Center,maxLines = 1, overflow = TextOverflow.Ellipsis, fontFamily = FontFamily.Serif)
+                Text("Artist:${it.artist}", color = Color(color =0xFFff8a33), textAlign = TextAlign.Center,maxLines = 1, overflow = TextOverflow.Ellipsis, fontFamily = FontFamily.Serif)
             }
         }
     }
@@ -86,4 +100,23 @@ fun AudioListScreen(viewModel: AudioListScreenViewModel = hiltViewModel(), navHo
 
 fun nameString(name: String): String{
     return name.replace("_"," ").replace("-"," ")
+}
+
+
+private fun handleAudioClick(
+    viewModel: AudioListScreenViewModel,
+    currentUri: String,
+    isPlaying: Boolean,
+    currentPlayingUri: String?,
+    navHostController: NavHostController
+) {
+    if (!isPlaying || currentUri != currentPlayingUri) {
+        viewModel.loadPlaylist(
+            viewModel.audioFiles.value?.map { it.uri.toString() } ?: emptyList(),
+            currentUri
+        )
+        viewModel.getCurrentAudio(currentUri)
+        viewModel.playAudio()
+    }
+    navHostController.navigate(ScreenDestination.PlayerScreen)
 }

@@ -4,8 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.example.musicplayerdemo2.navigation.NavigationHost
@@ -21,12 +25,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MusicPlayerDemo2Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding -> //if removed no problem
 
-                    val navController = rememberNavController()
-                    NavigationHost(navController)
-
-                }
+                val navController = rememberNavController()
+                NavigationHost(navController)
             }
         }
     }

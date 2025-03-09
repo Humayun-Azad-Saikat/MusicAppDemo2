@@ -2,10 +2,8 @@ package com.example.musicplayerdemo2.contentProvider
 
 import android.content.ContentUris
 import android.content.Context
-import android.net.Uri
 import android.provider.MediaStore
 import com.example.musicplayerdemo2.model.Audio
-import java.net.URI
 import javax.inject.Inject
 
 class MusicContentResolver @Inject constructor(val context: Context){

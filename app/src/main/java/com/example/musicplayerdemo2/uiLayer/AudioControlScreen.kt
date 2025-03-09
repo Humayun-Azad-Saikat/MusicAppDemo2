@@ -10,10 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 
@@ -21,7 +18,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -34,21 +30,27 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.musicplayerdemo2.R
 import com.example.musicplayerdemo2.viewModel.AudioControlScreenViewModel
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
+import com.example.musicplayerdemo2.model.DataStorePrefUtils
+import com.example.musicplayerdemo2.viewModel.AudioListScreenViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 //@Preview(showBackground = true)
 @Composable
 fun PlayerScreen(viewModel: AudioControlScreenViewModel = hiltViewModel()){
 
+    val dataStorePrefUtils = viewModel.dataStorePrefUtils
 
     var seekPosition: Float by remember { mutableStateOf(0f) }
     var duration: Long by remember { mutableStateOf(1L) }
@@ -113,6 +115,7 @@ fun PlayerScreen(viewModel: AudioControlScreenViewModel = hiltViewModel()){
                         .size(80.dp)
                         .clickable(onClick = {
                             viewModel.previousTrack()
+                            saveAudioName_Uri(dataStorePrefUtils,viewModel)
                         }),
 
                     tint = Color.Blue
@@ -125,6 +128,7 @@ fun PlayerScreen(viewModel: AudioControlScreenViewModel = hiltViewModel()){
                     Modifier
                         .size(80.dp)
                         .clickable(onClick = {
+                            Log.d("audioPlay", "AudioControlOnFooter: ${viewModel.media3Components.isPlaying()}")
                             //if (!viewModel.media3Components.isPlaying()) {
                             if (!viewModel.media3Components.isPlaying()) {
                                 viewModel.playAudio()
@@ -145,6 +149,7 @@ fun PlayerScreen(viewModel: AudioControlScreenViewModel = hiltViewModel()){
                         .size(80.dp)
                         .clickable(onClick = {
                             viewModel.nextTrack()
+                            saveAudioName_Uri(dataStorePrefUtils,viewModel)
                         }),
 
                     tint = Color.Blue
@@ -156,4 +161,17 @@ fun PlayerScreen(viewModel: AudioControlScreenViewModel = hiltViewModel()){
     }
 
 
+}
+
+fun saveAudioName_Uri(dataStorePrefUtils: DataStorePrefUtils,viewModel: AudioControlScreenViewModel){
+
+
+    GlobalScope.launch(Dispatchers.IO){
+        dataStorePrefUtils.saveTrackName(viewModel.getAudioName())
+        dataStorePrefUtils.saveAudioUri(viewModel.getCurrentPlayingAudioUri().toString())
+    }
+
+//    scope.launch {
+//
+//    }
 }

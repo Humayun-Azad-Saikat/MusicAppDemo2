@@ -135,10 +135,8 @@ class Media3Components @Inject constructor(val context: Context): DefaultLifecyc
 
         val fileName = filePath?.substringAfterLast("/")?.replace("_", " ")?.replace("-", " ") ?: "Unknown Track"
 
-        return if (fileName.isNotEmpty() && exoPlayer.isPlaying) {
+        return if (fileName.isNotEmpty()) {
             fileName
-        } else if (!exoPlayer.isPlaying) {
-            ""
         } else {
             "Unknown Track"
         }

@@ -2,13 +2,17 @@ package com.example.musicplayerdemo2.viewModel
 
 import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
+import com.example.musicplayerdemo2.model.DataStorePrefUtils
 import com.example.musicplayerdemo2.model.Media3Components
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 
 @HiltViewModel
-class AudioControlScreenViewModel @Inject constructor(val media3Components: Media3Components): ViewModel() {
+class AudioControlScreenViewModel @Inject constructor(
+    val media3Components: Media3Components,
+    val dataStorePrefUtils: DataStorePrefUtils
+): ViewModel() {
 
     //audio control handle //for playerScreen
 
@@ -51,6 +55,10 @@ class AudioControlScreenViewModel @Inject constructor(val media3Components: Medi
 
     fun getAlbum():Bitmap?{
         return media3Components.getAlbum()
+    }
+
+    fun getCurrentPlayingAudioUri(): String?{
+        return media3Components.getCurrentPlayingAudioUri().toString()
     }
 
     fun formatTime(milliSeconds: Long): String{

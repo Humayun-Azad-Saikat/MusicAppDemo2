@@ -2,6 +2,7 @@ package com.example.musicplayerdemo2.di
 
 import android.content.Context
 import com.example.musicplayerdemo2.contentProvider.MusicContentResolver
+import com.example.musicplayerdemo2.model.DataStorePrefUtils
 import com.example.musicplayerdemo2.model.Media3Components
 import dagger.Module
 import dagger.Provides
@@ -25,5 +26,13 @@ object MusicAppModule {
     fun providesMedia3Components(@ApplicationContext context: Context): Media3Components{
         return Media3Components(context)
     }
+
+
+    @Provides
+    @Singleton
+    fun providesDataStorePrefUtils(@ApplicationContext context: Context): DataStorePrefUtils{
+        return DataStorePrefUtils(context)
+    }
+
 
 }

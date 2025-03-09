@@ -79,6 +79,11 @@ dependencies {
     //kotlinx serialization for navigaiton
     implementation(libs.kotlinx.serialization.json)
 
+    implementation("androidx.compose.ui:ui:1.5.0")
+
+    //datastore pref
+    implementation(libs.androidx.datastore.preferences)
+
 }
 
 kapt {
